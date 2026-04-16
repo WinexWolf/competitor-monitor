@@ -1,0 +1,10 @@
+{
+  "crons": [
+    { "path": "/api/cron", "schedule": "0 */6 * * *" },
+    { "path": "/api/digest?send=1", "schedule": "0 9 * * 1" }
+  ],
+  "functions": {
+    "pages/api/cron.ts": { "maxDuration": 60 },
+    "pages/api/snapshot.ts": { "maxDuration": 60 }
+  }
+}
