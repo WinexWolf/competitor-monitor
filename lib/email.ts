@@ -1,11 +1,21 @@
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 import { format } from 'date-fns'
 import type { Change } from './types'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  })
+}
 
 export async function sendDigest(to: string[], changes: Change[], since: Date) {
-  if (!process.env.RESEND_API_KEY) return { ok: false, error: 'No RESEND_API_KEY' }
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    return { ok: false, error: 'GMAIL_USER or GMAIL_APP_PASSWORD not set' }
+  }
 
   const subject = changes.length
     ? `🔍 ${changes.length} competitor change${changes.length > 1 ? 's' : ''} — ${format(new Date(), 'MMM d')}`
@@ -14,9 +24,10 @@ export async function sendDigest(to: string[], changes: Change[], since: Date) {
   const html = buildHtml(changes, since)
 
   try {
-    await resend.emails.send({
-      from: process.env.FROM_EMAIL ?? 'digest@yourdomain.com',
-      to,
+    const transporter = getTransporter()
+    await transporter.sendMail({
+      from: `Competitor Monitor <${process.env.GMAIL_USER}>`,
+      to: to.join(', '),
       subject,
       html,
     })
@@ -27,7 +38,7 @@ export async function sendDigest(to: string[], changes: Change[], since: Date) {
 }
 
 function esc(s: string) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 function buildHtml(changes: Change[], since: Date) {
@@ -45,14 +56,14 @@ function buildHtml(changes: Change[], since: Date) {
           ${c.added.length ? `
             <p style="margin:0 0 4px;color:#166534;font-size:11px;font-weight:700;text-transform:uppercase">+ Added</p>
             <div style="background:#f0fdf4;border-left:3px solid #22c55e;padding:8px 12px;margin-bottom:8px">
-              ${c.added.slice(0,6).map(l=>`<p style="margin:2px 0;font-family:monospace;font-size:11px;color:#166534">${esc(l)}</p>`).join('')}
-              ${c.added.length>6?`<p style="margin:4px 0 0;font-size:11px;color:#6b7280">…${c.added.length-6} more</p>`:''}
+              ${c.added.slice(0, 6).map(l => `<p style="margin:2px 0;font-family:monospace;font-size:11px;color:#166534">${esc(l)}</p>`).join('')}
+              ${c.added.length > 6 ? `<p style="margin:4px 0 0;font-size:11px;color:#6b7280">…${c.added.length - 6} more</p>` : ''}
             </div>` : ''}
           ${c.removed.length ? `
             <p style="margin:0 0 4px;color:#991b1b;font-size:11px;font-weight:700;text-transform:uppercase">− Removed</p>
             <div style="background:#fef2f2;border-left:3px solid #ef4444;padding:8px 12px">
-              ${c.removed.slice(0,6).map(l=>`<p style="margin:2px 0;font-family:monospace;font-size:11px;color:#991b1b">${esc(l)}</p>`).join('')}
-              ${c.removed.length>6?`<p style="margin:4px 0 0;font-size:11px;color:#6b7280">…${c.removed.length-6} more</p>`:''}
+              ${c.removed.slice(0, 6).map(l => `<p style="margin:2px 0;font-family:monospace;font-size:11px;color:#991b1b">${esc(l)}</p>`).join('')}
+              ${c.removed.length > 6 ? `<p style="margin:4px 0 0;font-size:11px;color:#6b7280">…${c.removed.length - 6} more</p>` : ''}
             </div>` : ''}
         </div>
       </div>`).join('')
@@ -60,13 +71,11 @@ function buildHtml(changes: Change[], since: Date) {
   return `<!DOCTYPE html><html><body style="font-family:sans-serif;background:#f9fafb;padding:0;margin:0">
     <div style="max-width:600px;margin:0 auto;padding:24px 16px">
       <div style="background:#111827;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px">
-        <h1 style="color:#f9fafb;margin:0 0 4px;font-size:22px">${changes.length} Change${changes.length!==1?'s':''} Detected</h1>
-        <p style="color:#9ca3af;margin:0;font-size:13px">${format(since,'MMM d')} → ${format(new Date(),'MMM d, yyyy')}</p>
+        <h1 style="color:#f9fafb;margin:0 0 4px;font-size:22px">${changes.length} Change${changes.length !== 1 ? 's' : ''} Detected</h1>
+        <p style="color:#9ca3af;margin:0;font-size:13px">${format(since, 'MMM d')} → ${format(new Date(), 'MMM d, yyyy')}</p>
       </div>
       ${rows}
-      <p style="text-align:center;color:#9ca3af;font-size:11px;margin-top:20px">
-        Competitor Monitor · <a href="${process.env.APP_URL}/api/subscribers?unsubscribe=1" style="color:#6ee7b7">Unsubscribe</a>
-      </p>
+      <p style="text-align:center;color:#9ca3af;font-size:11px;margin-top:20px">Competitor Monitor</p>
     </div>
   </body></html>`
 }
