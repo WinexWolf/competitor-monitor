@@ -397,3 +397,4 @@ export default function Dashboard() {
     </>
   )
 }
+export const getServerSideProps = async () => ({ props: {} })
