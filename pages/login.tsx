@@ -35,6 +35,9 @@ export default function Login() {
     <>
       <Head>
         <title>Sign in — Peekly</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
       </Head>
 
@@ -87,3 +90,4 @@ export default function Login() {
     </>
   )
 }
+export const getServerSideProps = async () => ({ props: {} })
