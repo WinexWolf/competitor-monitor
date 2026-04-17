@@ -60,6 +60,23 @@ export default function Landing() {
       <Head>
         <title>Peekly — Your competitors moved. Did you notice?</title>
         <meta name="description" content="Peekly watches your competitor pages daily and sends you one clean email every Monday with exactly what changed. For founders and product marketers who hate surprises." />
+
+        {/* Open Graph — LinkedIn, Slack, iMessage */}
+        <meta property="og:title" content="Peekly — Your competitors moved. Did you notice?" />
+        <meta property="og:description" content="Track competitor pages. Get a weekly digest when something changes. Free for 3 pages." />
+        <meta property="og:image" content="https://competitor-board.vercel.app/og.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://competitor-board.vercel.app" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Peekly" />
+
+        {/* Twitter / X */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Peekly — Your competitors moved. Did you notice?" />
+        <meta name="twitter:description" content="Track competitor pages. Get a weekly digest when something changes. Free for 3 pages." />
+        <meta name="twitter:image" content="https://competitor-board.vercel.app/og.png" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -142,24 +159,9 @@ export default function Landing() {
           <p style={{ textAlign: 'center', fontSize: 12, color: S.muted, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 40 }}>How it works</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
             {[
-              {
-                n: '01',
-                title: 'Paste any URL',
-                body: "Competitor's pricing page. Feature comparison. Changelog. Job board. If it's public, we can watch it.",
-                note: 'Takes 30 seconds.'
-              },
-              {
-                n: '02',
-                title: 'We do the boring part',
-                body: 'Every day, Peekly snapshots the page and runs a line-by-line diff against the last version.',
-                note: 'Zero effort from you.'
-              },
-              {
-                n: '03',
-                title: 'Monday. Your inbox.',
-                body: 'One clean email with every change from the past week. Added lines in green, removed in red.',
-                note: 'Read it in 60 seconds.'
-              },
+              { n: '01', title: 'Paste any URL', body: "Competitor's pricing page. Feature comparison. Changelog. Job board. If it's public, we can watch it.", note: 'Takes 30 seconds.' },
+              { n: '02', title: 'We do the boring part', body: 'Every day, Peekly snapshots the page and runs a line-by-line diff against the last version.', note: 'Zero effort from you.' },
+              { n: '03', title: 'Monday. Your inbox.', body: 'One clean email with every change from the past week. Added lines in green, removed in red.', note: 'Read it in 60 seconds.' },
             ].map(step => (
               <div key={step.n} style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 14, padding: '28px 24px' }}>
                 <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: S.green, marginBottom: 14, letterSpacing: '.08em' }}>{step.n}</p>
@@ -175,28 +177,14 @@ export default function Landing() {
         <section style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px 80px' }}>
           <p style={{ textAlign: 'center', fontSize: 12, color: S.muted, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 40 }}>What lands in your inbox</p>
           <div style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 16, overflow: 'hidden' }}>
-            {/* Fake email header */}
             <div style={{ background: S.surface2, padding: '16px 24px', borderBottom: `1px solid ${S.border}` }}>
               <p style={{ fontSize: 13, color: S.muted, margin: '0 0 4px' }}>From: <span style={{ color: S.text }}>digest@peekly.io</span></p>
               <p style={{ fontSize: 13, color: S.muted, margin: '0 0 4px' }}>Subject: <span style={{ color: S.text }}>🔍 3 competitor changes this week — Mon Apr 14</span></p>
             </div>
-            {/* Fake diff */}
             <div style={{ padding: '24px' }}>
               {[
-                {
-                  label: 'Acme Co — Pricing Page',
-                  url: 'acme.com/pricing',
-                  changes: '4 changes',
-                  added: ['Pro plan: $49/mo → $39/mo', 'New: Starter plan at $9/mo added', 'Annual discount increased to 30%'],
-                  removed: ['Free tier removed from pricing page'],
-                },
-                {
-                  label: 'Rival Inc — Features',
-                  url: 'rivalinc.com/features',
-                  changes: '2 changes',
-                  added: ['AI Assistant now listed under all plans'],
-                  removed: ['SSO removed from Starter tier'],
-                },
+                { label: 'Acme Co — Pricing Page', url: 'acme.com/pricing', changes: '4 changes', added: ['Pro plan: $49/mo → $39/mo', 'New: Starter plan at $9/mo added', 'Annual discount increased to 30%'], removed: ['Free tier removed from pricing page'] },
+                { label: 'Rival Inc — Features', url: 'rivalinc.com/features', changes: '2 changes', added: ['AI Assistant now listed under all plans'], removed: ['SSO removed from Starter tier'] },
               ].map((item, i) => (
                 <div key={i} style={{ border: `1px solid ${S.border}`, borderRadius: 10, overflow: 'hidden', marginBottom: i === 0 ? 12 : 0 }}>
                   <div style={{ background: '#0d1117', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -208,14 +196,10 @@ export default function Landing() {
                   </div>
                   <div style={{ padding: '12px 16px' }}>
                     <div style={{ background: '#021a0b', borderLeft: `3px solid ${S.green}`, borderRadius: '0 6px 6px 0', padding: '8px 12px', marginBottom: 8 }}>
-                      {item.added.map((l, j) => (
-                        <p key={j} style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: '#86efac', margin: '2px 0' }}>+ {l}</p>
-                      ))}
+                      {item.added.map((l, j) => <p key={j} style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: '#86efac', margin: '2px 0' }}>+ {l}</p>)}
                     </div>
                     <div style={{ background: '#1a0505', borderLeft: '3px solid #ef4444', borderRadius: '0 6px 6px 0', padding: '8px 12px' }}>
-                      {item.removed.map((l, j) => (
-                        <p key={j} style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: '#fca5a5', margin: '2px 0' }}>- {l}</p>
-                      ))}
+                      {item.removed.map((l, j) => <p key={j} style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: '#fca5a5', margin: '2px 0' }}>- {l}</p>)}
                     </div>
                   </div>
                 </div>
@@ -230,34 +214,15 @@ export default function Landing() {
           <p style={{ textAlign: 'center', fontSize: 12, color: S.muted, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 40 }}>Who it's for</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
             {[
-              {
-                who: 'Startup Founders',
-                icon: '🚀',
-                pain: 'Got blindsided by a competitor move',
-                fix: "You'll know about it before your customers do.",
-              },
-              {
-                who: 'Product Marketers',
-                icon: '📊',
-                pain: 'Spend Fridays manually checking competitor tabs',
-                fix: 'That Friday ritual just became a Monday email.',
-              },
-              {
-                who: 'Small SaaS Teams',
-                icon: '⚡',
-                pain: 'No budget for enterprise intel tools',
-                fix: 'Same signal, $29/mo, no sales call required.',
-              },
+              { who: 'Startup Founders', icon: '🚀', pain: 'Got blindsided by a competitor move', fix: "You'll know about it before your customers do." },
+              { who: 'Product Marketers', icon: '📊', pain: 'Spend Fridays manually checking competitor tabs', fix: 'That Friday ritual just became a Monday email.' },
+              { who: 'Small SaaS Teams', icon: '⚡', pain: 'No budget for enterprise intel tools', fix: 'Same signal, $29/mo, no sales call required.' },
             ].map(item => (
               <div key={item.who} style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 14, padding: '28px 24px' }}>
                 <p style={{ fontSize: 24, marginBottom: 14 }}>{item.icon}</p>
                 <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 10 }}>{item.who}</p>
-                <p style={{ fontSize: 13, color: S.red, marginBottom: 10, display: 'flex', gap: 6 }}>
-                  <span>×</span><span>{item.pain}</span>
-                </p>
-                <p style={{ fontSize: 13, color: S.green, display: 'flex', gap: 6 }}>
-                  <span>✓</span><span>{item.fix}</span>
-                </p>
+                <p style={{ fontSize: 13, color: S.red, marginBottom: 10, display: 'flex', gap: 6 }}><span>×</span><span>{item.pain}</span></p>
+                <p style={{ fontSize: 13, color: S.green, display: 'flex', gap: 6 }}><span>✓</span><span>{item.fix}</span></p>
               </div>
             ))}
           </div>
@@ -268,35 +233,12 @@ export default function Landing() {
           <p style={{ textAlign: 'center', fontSize: 12, color: S.muted, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12 }}>Pricing</p>
           <p style={{ textAlign: 'center', fontSize: 28, fontWeight: 700, marginBottom: 8, letterSpacing: '-.02em' }}>Simple. No tricks.</p>
           <p style={{ textAlign: 'center', fontSize: 15, color: S.muted, marginBottom: 40 }}>Start free. Pay when it's obviously worth it.</p>
-
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {[
-              {
-                name: 'Free',
-                price: '$0',
-                sub: 'forever',
-                features: ['3 competitor pages', 'Weekly Monday digest', 'Change history', 'Email alerts'],
-                cta: 'Start free',
-                href: '/dashboard',
-                highlight: false,
-              },
-              {
-                name: 'Pro',
-                price: '$29',
-                sub: 'per month',
-                features: ['20 competitor pages', 'Weekly Monday digest', 'Full change history', 'Email alerts', 'Cancel anytime'],
-                cta: 'Get early access',
-                href: '#hero',
-                highlight: true,
-              },
+              { name: 'Free', price: '$0', sub: 'forever', features: ['3 competitor pages', 'Weekly Monday digest', 'Change history', 'Email alerts'], cta: 'Start free', href: '/dashboard', highlight: false },
+              { name: 'Pro', price: '$29', sub: 'per month', features: ['20 competitor pages', 'Weekly Monday digest', 'Full change history', 'Email alerts', 'Cancel anytime'], cta: 'Get early access', href: '/dashboard', highlight: true },
             ].map(plan => (
-              <div key={plan.name} style={{
-                background: S.surface,
-                border: `1px solid ${plan.highlight ? '#166534' : S.border}`,
-                borderRadius: 16,
-                padding: '28px 24px',
-                position: 'relative',
-              }}>
+              <div key={plan.name} style={{ background: S.surface, border: `1px solid ${plan.highlight ? '#166534' : S.border}`, borderRadius: 16, padding: '28px 24px', position: 'relative' }}>
                 {plan.highlight && (
                   <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: S.green, color: '#000', fontSize: 11, fontWeight: 700, borderRadius: 99, padding: '3px 12px', whiteSpace: 'nowrap', letterSpacing: '.04em' }}>
                     MOST POPULAR
@@ -314,14 +256,7 @@ export default function Landing() {
                     <span style={{ fontSize: 13, color: S.text }}>{f}</span>
                   </div>
                 ))}
-                <a href={plan.href} style={{
-                  display: 'block', textAlign: 'center', marginTop: 24,
-                  padding: '11px 0', borderRadius: 9, textDecoration: 'none',
-                  background: plan.highlight ? S.green : S.surface2,
-                  border: `1px solid ${plan.highlight ? 'transparent' : S.border}`,
-                  color: plan.highlight ? '#000' : S.text,
-                  fontWeight: 600, fontSize: 14,
-                }}>
+                <a href={plan.href} style={{ display: 'block', textAlign: 'center', marginTop: 24, padding: '11px 0', borderRadius: 9, textDecoration: 'none', background: plan.highlight ? S.green : S.surface2, border: `1px solid ${plan.highlight ? 'transparent' : S.border}`, color: plan.highlight ? '#000' : S.text, fontWeight: 600, fontSize: 14 }}>
                   {plan.cta}
                 </a>
               </div>
