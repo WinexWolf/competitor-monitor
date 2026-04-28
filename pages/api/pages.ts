@@ -1,6 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getPages, addPage, deletePage } from '@/lib/storage'
 import { getUserId } from '@/lib/auth'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
+import { scrapePage } from '@/lib/scraper'
+import { saveSnapshot } from '@/lib/storage'
+import { summarizePage } from '@/lib/summarize'
+import { sendPageAddedConfirmation } from '@/lib/email'
 import { randomUUID } from 'crypto'
 
 const FREE_LIMIT = 3
@@ -27,7 +33,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const page = { id: randomUUID(), url, label, addedAt: new Date().toISOString(), status: 'active' as const }
     await addPage(userId, page)
-    return res.status(201).json({ page })
+
+    // Respond immediately so UI doesn't wait
+    res.status(201).json({ page })
+
+    // Background: scrape → snapshot → summarize → email
+    try {
+      const scraped = await scrapePage(url)
+      if (scraped.ok && scraped.content) {
+        const now = new Date().toISOString()
+        await saveSnapshot(userId, { pageId: page.id, content: scraped.content, hash: scraped.hash!, capturedAt: now })
+
+        // Get user email for confirmation
+        const session = await getServerSession(req, res, authOptions)
+        const userEmail = session?.user?.email
+        if (userEmail) {
+          const summary = await summarizePage(scraped.content, url, label)
+          await sendPageAddedConfirmation(userEmail, label, url, summary)
+        }
+      }
+    } catch {
+      // Silent — don't break the response
+    }
+
+    return
   }
 
   if (req.method === 'DELETE') {
