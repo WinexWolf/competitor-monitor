@@ -42,7 +42,6 @@ function Spinner() {
   )
 }
 
-// ── Add Page Modal ─────────────────────────────────────────────────────────────
 function AddModal({ onClose, onAdd, atLimit }: { onClose: () => void; onAdd: (p: Page) => void; atLimit: boolean }) {
   const [url, setUrl] = useState('')
   const [label, setLabel] = useState('')
@@ -109,7 +108,6 @@ function AddModal({ onClose, onAdd, atLimit }: { onClose: () => void; onAdd: (p:
   )
 }
 
-// ── Change Card ────────────────────────────────────────────────────────────────
 function ChangeCard({ c }: { c: Change }) {
   const [open, setOpen] = useState(false)
   return (
@@ -150,7 +148,6 @@ function ChangeCard({ c }: { c: Change }) {
   )
 }
 
-// ── Dashboard ──────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -165,12 +162,10 @@ export default function Dashboard() {
 
   const user = session?.user as { id?: string; name?: string | null; email?: string | null; image?: string | null } | undefined
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (status === 'unauthenticated') router.replace('/login')
   }, [status, router])
 
-  // Register user on first load so cron knows about them
   useEffect(() => {
     if (status === 'authenticated' && !registered) {
       fetch('/api/register', { method: 'POST' }).then(() => setRegistered(true))
@@ -219,7 +214,6 @@ export default function Dashboard() {
     notify('Page removed')
   }
 
-  // Loading state
   if (status === 'loading' || status === 'unauthenticated') {
     return (
       <div style={{ minHeight: '100vh', background: S.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -245,14 +239,12 @@ export default function Dashboard() {
 
       <div style={{ minHeight: '100vh', background: S.bg, color: S.text, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
 
-        {/* Toast */}
         {toast && (
           <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 100, background: S.surface2, border: `1px solid ${S.border}`, borderRadius: 10, padding: '10px 16px', fontSize: 13, boxShadow: '0 4px 24px rgba(0,0,0,.4)' }}>
             {toast}
           </div>
         )}
 
-        {/* Header */}
         <header style={{ background: S.bg, borderBottom: `1px solid ${S.border}`, padding: '0 24px', position: 'sticky', top: 0, zIndex: 10 }}>
           <div style={{ maxWidth: 960, margin: '0 auto', height: 58, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -264,12 +256,10 @@ export default function Dashboard() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {/* Free tier badge */}
               <div style={{ background: S.surface2, border: `1px solid ${S.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12, color: S.muted }}>
                 <span style={{ color: atLimit ? S.yellow : S.green }}>{pages.length}</span>
                 <span> / {FREE_LIMIT} pages</span>
-                {atLimit && <span style={{ color: S.yellow }}> · </span>}
-                {atLimit && <span style={{ color: S.yellow }}>Upgrade</span>}
+                {atLimit && <span style={{ color: S.yellow }}> · Upgrade</span>}
               </div>
 
               <button onClick={sendTest} disabled={sending}
@@ -282,17 +272,14 @@ export default function Dashboard() {
                 {checking ? <><Spinner /> Checking…</> : '↻ Check now'}
               </button>
 
-              {/* Avatar + sign out */}
-              <div style={{ position: 'relative' }} className="avatar-wrap">
-                <div style={{ width: 30, height: 30, borderRadius: '50%', background: S.surface2, border: `1px solid ${S.border}`, overflow: 'hidden', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: S.muted }}
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  title={`${user?.email} — click to sign out`}
-                >
-                  {user?.image
-                    ? <img src={user.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                    : user?.name?.[0]?.toUpperCase() ?? '?'
-                  }
-                </div>
+              <div style={{ width: 30, height: 30, borderRadius: '50%', background: S.surface2, border: `1px solid ${S.border}`, overflow: 'hidden', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: S.muted }}
+                onClick={() => signOut({ callbackUrl: '/' })}
+                title={`${user?.email} — click to sign out`}
+              >
+                {user?.image
+                  ? <img src={user.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                  : user?.name?.[0]?.toUpperCase() ?? '?'
+                }
               </div>
             </div>
           </div>
@@ -300,13 +287,12 @@ export default function Dashboard() {
 
         <main style={{ maxWidth: 960, margin: '0 auto', padding: '28px 24px' }}>
 
-          {/* First time onboarding banner */}
           {pages.length === 0 && (
-            <div style={{ background: S.greenDim, border: `1px solid #166534`, borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ background: S.greenDim, border: '1px solid #166534', borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 16 }}>
               <span style={{ fontSize: 24 }}>👋</span>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 14, fontWeight: 600, color: S.green, margin: '0 0 2px' }}>Welcome to Peekly! Start by adding a competitor URL.</p>
-                <p style={{ fontSize: 13, color: S.muted, margin: 0 }}>Paste in a pricing page, features page, or changelog. We will watch it daily and email you when something changes.</p>
+                <p style={{ fontSize: 13, color: S.muted, margin: 0 }}>Paste in a pricing page, features page, or changelog. We'll watch it daily and email you when something changes.</p>
               </div>
               <button onClick={() => setShowAdd(true)} style={{ padding: '8px 18px', borderRadius: 8, border: 'none', background: S.green, color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 Add first page →
@@ -314,7 +300,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Free tier upgrade banner */}
           {atLimit && (
             <div style={{ background: '#1a0e00', border: '1px solid #7c4a00', borderRadius: 12, padding: '14px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
@@ -327,7 +312,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 28 }}>
             {[
               { label: 'Pages tracked', value: pages.length, sub: `${pages.filter(p => p.status === 'active').length} active` },
@@ -342,7 +326,6 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Tabs */}
           <div style={{ display: 'flex', gap: 4, background: S.surface, borderRadius: 10, padding: 4, width: 'fit-content', marginBottom: 20 }}>
             {(['pages', 'changes'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)} style={{ padding: '6px 18px', borderRadius: 7, border: 'none', fontSize: 13, cursor: 'pointer', background: tab === t ? S.green : 'transparent', color: tab === t ? '#000' : S.muted, fontWeight: tab === t ? 600 : 400 }}>
@@ -351,7 +334,6 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Pages tab */}
           {tab === 'pages' && (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
@@ -393,7 +375,6 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* Changes tab */}
           {tab === 'changes' && (
             changes.length === 0 ? (
               <div style={{ border: `2px dashed ${S.border}`, borderRadius: 14, padding: '56px 24px', textAlign: 'center' }}>
@@ -409,12 +390,11 @@ export default function Dashboard() {
 
       {showAdd && <AddModal onClose={() => setShowAdd(false)} atLimit={atLimit} onAdd={async p => {
         setPages(prev => [...prev, p])
-        notify('Added! Taking first snapshot…')
-        await fetch('/api/snapshot', { method: 'POST' })
         await load()
-        notify('✓ Baseline set — we will alert you when it changes')
+        notify('✓ Added — snapshot taken, watching for changes')
       }} />}
     </>
   )
 }
+
 export const getServerSideProps = async () => ({ props: {} })
