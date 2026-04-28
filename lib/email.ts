@@ -66,6 +66,45 @@ export async function sendWelcome(to: string, name: string) {
   }
 }
 
+// ── Page added confirmation ───────────────────────────────────────────────────
+export async function sendPageAddedConfirmation(to: string, label: string, url: string, summary: string) {
+  if (!process.env.GMAIL_USER) return { ok: false }
+  try {
+    await transporter().sendMail({
+      from: `Peekly 👁 <${process.env.GMAIL_USER}>`,
+      to,
+      subject: `👁 Now watching: ${label}`,
+      html: `<!DOCTYPE html><html><body style="font-family:sans-serif;background:#f9fafb;margin:0;padding:0">
+        <div style="max-width:560px;margin:0 auto;padding:32px 16px">
+          <div style="background:#111827;border-radius:12px;padding:24px;margin-bottom:20px">
+            <p style="color:#6b6b85;font-size:12px;margin:0 0 6px;text-transform:uppercase;letter-spacing:.08em">Now monitoring</p>
+            <h1 style="color:#f9fafb;margin:0 0 4px;font-size:20px">${esc(label)}</h1>
+            <a href="${esc(url)}" style="color:#6ee7b7;font-size:12px;font-family:monospace">${esc(url)}</a>
+          </div>
+
+          <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:20px 24px;margin-bottom:16px">
+            <p style="font-size:13px;font-weight:700;color:#374151;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em">What we found on this page</p>
+            <p style="font-size:14px;color:#111827;line-height:1.65;margin:0">${esc(summary || 'Snapshot saved successfully. We will compare future versions against this baseline.')}</p>
+          </div>
+
+          <div style="background:#052e16;border:1px solid #166534;border-radius:12px;padding:16px 20px;margin-bottom:20px">
+            <p style="color:#22c55e;font-size:13px;margin:0">✓ Baseline snapshot saved. We will check this page daily at 8 AM UTC and email you the moment anything changes.</p>
+          </div>
+
+          <div style="text-align:center">
+            <a href="${process.env.APP_URL}/dashboard" style="display:inline-block;background:#22c55e;color:#000;font-weight:700;font-size:13px;padding:10px 22px;border-radius:8px;text-decoration:none">View dashboard</a>
+          </div>
+
+          <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:20px">Peekly</p>
+        </div>
+      </body></html>`,
+    })
+    return { ok: true }
+  } catch (e: unknown) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) }
+  }
+}
+
 // ── Notify you (admin) of new signup ─────────────────────────────────────────
 export async function notifyAdminOfSignup(email: string, name: string) {
   if (!process.env.GMAIL_USER || !process.env.ADMIN_EMAIL) return { ok: false }
