@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getPages, addPage, deletePage } from '@/lib/storage'
+import { getPages, addPage, deletePage, saveSnapshot } from '@/lib/storage'
 import { getUserId } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { scrapePage } from '@/lib/scraper'
-import { saveSnapshot } from '@/lib/storage'
 import { summarizePage } from '@/lib/summarize'
 import { sendPageAddedConfirmation } from '@/lib/email'
 import { randomUUID } from 'crypto'
@@ -31,32 +30,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (pages.length >= FREE_LIMIT) return res.status(402).json({ error: 'Free limit reached. Upgrade to Pro for up to 20 pages.', upgrade: true })
     if (pages.find(p => p.url === url)) return res.status(400).json({ error: 'Already tracking this URL' })
 
+    // Get session BEFORE responding
+    const session = await getServerSession(req, res, authOptions)
+    const userEmail = session?.user?.email ?? null
+
     const page = { id: randomUUID(), url, label, addedAt: new Date().toISOString(), status: 'active' as const }
     await addPage(userId, page)
 
-    // Respond immediately so UI doesn't wait
-    res.status(201).json({ page })
-
-    // Background: scrape → snapshot → summarize → email
+    // Scrape + snapshot + summarize + email — all before responding
     try {
       const scraped = await scrapePage(url)
       if (scraped.ok && scraped.content) {
         const now = new Date().toISOString()
-        await saveSnapshot(userId, { pageId: page.id, content: scraped.content, hash: scraped.hash!, capturedAt: now })
+        await saveSnapshot(userId, {
+          pageId: page.id,
+          content: scraped.content,
+          hash: scraped.hash!,
+          capturedAt: now,
+        })
 
-        // Get user email for confirmation
-        const session = await getServerSession(req, res, authOptions)
-        const userEmail = session?.user?.email
         if (userEmail) {
           const summary = await summarizePage(scraped.content, url, label)
           await sendPageAddedConfirmation(userEmail, label, url, summary)
         }
       }
-    } catch {
-      // Silent — don't break the response
+    } catch (e) {
+      console.error('Post-add pipeline error:', e)
+      // Don't fail the request — page is already saved
     }
 
-    return
+    return res.status(201).json({ page })
   }
 
   if (req.method === 'DELETE') {
