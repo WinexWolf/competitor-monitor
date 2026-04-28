@@ -81,9 +81,11 @@ export async function addToWaitlist(email: string) {
 }
 
 // ── User registry (for cron to know who to process) ───────────────────────────
-export async function registerUser(userId: string, email: string) {
+export async function registerUser(userId: string, email: string): Promise<boolean> {
   const users = (await kv.get<Array<{ userId: string; email: string }>>('all_users')) ?? []
   if (!users.find(u => u.userId === userId)) {
     await kv.set('all_users', [...users, { userId, email }])
+    return true // new user
   }
+  return false // existing user
 }
