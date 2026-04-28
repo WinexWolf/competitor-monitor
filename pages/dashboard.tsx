@@ -300,6 +300,20 @@ export default function Dashboard() {
 
         <main style={{ maxWidth: 960, margin: '0 auto', padding: '28px 24px' }}>
 
+          {/* First time onboarding banner */}
+          {pages.length === 0 && (
+            <div style={{ background: S.greenDim, border: `1px solid #166534`, borderRadius: 12, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 24 }}>👋</span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: S.green, margin: '0 0 2px' }}>Welcome to Peekly! Start by adding a competitor URL.</p>
+                <p style={{ fontSize: 13, color: S.muted, margin: 0 }}>Paste in a pricing page, features page, or changelog. We will watch it daily and email you when something changes.</p>
+              </div>
+              <button onClick={() => setShowAdd(true)} style={{ padding: '8px 18px', borderRadius: 8, border: 'none', background: S.green, color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                Add first page →
+              </button>
+            </div>
+          )}
+
           {/* Free tier upgrade banner */}
           {atLimit && (
             <div style={{ background: '#1a0e00', border: '1px solid #7c4a00', borderRadius: 12, padding: '14px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -393,7 +407,13 @@ export default function Dashboard() {
         </main>
       </div>
 
-      {showAdd && <AddModal onClose={() => setShowAdd(false)} atLimit={atLimit} onAdd={p => { setPages(prev => [...prev, p]); notify('Page added — hit Check now to take a baseline snapshot') }} />}
+      {showAdd && <AddModal onClose={() => setShowAdd(false)} atLimit={atLimit} onAdd={async p => {
+        setPages(prev => [...prev, p])
+        notify('Added! Taking first snapshot…')
+        await fetch('/api/snapshot', { method: 'POST' })
+        await load()
+        notify('✓ Baseline set — we will alert you when it changes')
+      }} />}
     </>
   )
 }
