@@ -77,6 +77,11 @@ export default function Landing() {
         <meta name="twitter:description" content="Track competitor pages. Get a weekly digest when something changes. Free for 3 pages." />
         <meta name="twitter:image" content="https://competitor-board.vercel.app/og.png" />
 
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -235,8 +240,8 @@ export default function Landing() {
           <p style={{ textAlign: 'center', fontSize: 15, color: S.muted, marginBottom: 40 }}>Start free. Pay when it's obviously worth it.</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             {[
-              { name: 'Free', price: '$0', sub: 'forever', features: ['3 competitor pages', 'Weekly Monday digest', 'Change history', 'Email alerts'], cta: 'Start free', href: '/dashboard', highlight: false },
-              { name: 'Pro', price: '$29', sub: 'per month', features: ['20 competitor pages', 'Weekly Monday digest', 'Full change history', 'Email alerts', 'Cancel anytime'], cta: 'Get early access', href: '/dashboard', highlight: true },
+              { name: 'Free', price: '$0', sub: 'forever', features: ['3 competitor pages', 'Weekly Monday digest', 'Change history', 'Email alerts', 'No credit card'], cta: 'Start free', href: '/dashboard', highlight: false },
+              { name: 'Pro', price: '$29', sub: 'per month', features: ['20 competitor pages', 'Daily change alerts', 'Full change history', 'AI page summaries', 'LinkedIn monitoring 🔜', 'Cancel anytime'], cta: 'Get early access', href: '/dashboard', highlight: true },
             ].map(plan => (
               <div key={plan.name} style={{ background: S.surface, border: `1px solid ${plan.highlight ? '#166534' : S.border}`, borderRadius: 16, padding: '28px 24px', position: 'relative' }}>
                 {plan.highlight && (
