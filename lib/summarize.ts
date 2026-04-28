@@ -6,7 +6,7 @@ export async function summarizePage(content: string, url: string, label: string)
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,7 +30,8 @@ Write 2-3 sentences summarizing what this page is about. Focus on: pricing tiers
 
     const data = await res.json()
     return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? ''
-  } catch {
+  } catch (e) {
+    console.error('Gemini error:', e)
     return ''
   }
 }
